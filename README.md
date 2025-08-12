@@ -57,3 +57,6 @@ Authentication is handled via cookies, and the MVC pattern is used for organizat
 ## Dependencies
 - Microsoft.EntityFrameworkCore.InMemory
 - Microsoft.AspNetCore.Authentication.Cookies
+
+## Contact
+davor.celcic@gmail.com
