@@ -23,5 +23,16 @@ namespace AbySalto.Mid.WebApi.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> RemoveFavoriteAsync(int userId, int productId)
+        {
+            var fav = await _context.UserFavorites.FirstOrDefaultAsync(uf => uf.UserId == userId && uf.ProductId == productId);
+            if (fav == null)
+                return false;
+
+            _context.UserFavorites.Remove(fav);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
