@@ -1,6 +1,4 @@
 # mid.net-main
-README.txt
-
  
 # AbySalto.Mid - InMemory Product & User Management Application with Basket and Favorites Functionality
 
