@@ -44,6 +44,24 @@ namespace AbySalto.Mid.WebApi.Services
             return product;
         }
 
+        public async Task<ProductResponse> GetProductsAsync(int page, int pageSize = 10, string sortBy = "id", string sortOrder = "asc")
+        {
+            string cacheKey = $"products_{page}_{pageSize}_{sortBy}_{sortOrder}";
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                sortBy = "id"; // Default sort - id
+            }
+            if (string.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = "asc"; // Default order - asc
+            }
+            if (pageSize <= 0 || pageSize > 100)
+            {
+                pageSize = 10; // Default size - 10
+            }
+            return await GetProductsStringAsync($"https://dummyjson.com/products?limit={pageSize}&skip={(page - 1) * pageSize}&sort={sortBy}&order={sortOrder}", cacheKey);
+        }
+
         private async Task<ProductResponse> GetProductsStringAsync(string link, string cacheKey)
         {
             ProductResponse? productResponse;

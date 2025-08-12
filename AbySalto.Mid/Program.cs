@@ -28,6 +28,7 @@ namespace AbySalto.Mid
 
             // Register services
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<BasketService>();
 
             builder.Services
                 .AddPresentation()
