@@ -1,6 +1,8 @@
 
 using AbySalto.Mid.Application;
 using AbySalto.Mid.Infrastructure;
+using AbySalto.Mid.WebApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AbySalto.Mid
 {
@@ -9,6 +11,9 @@ namespace AbySalto.Mid
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add DbContext with InMemory provider
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
 
             builder.Services
                 .AddPresentation()
