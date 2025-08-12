@@ -2,6 +2,8 @@
 using AbySalto.Mid.Application;
 using AbySalto.Mid.Infrastructure;
 using AbySalto.Mid.WebApi.Data;
+using AbySalto.Mid.WebApi.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace AbySalto.Mid
@@ -14,6 +16,16 @@ namespace AbySalto.Mid
 
             // Add DbContext with InMemory provider
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
+
+            // Add authentication services
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                });
+
+            // Register services
+            builder.Services.AddScoped<UserService>();
 
             builder.Services
                 .AddPresentation()
@@ -38,8 +50,8 @@ namespace AbySalto.Mid
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
