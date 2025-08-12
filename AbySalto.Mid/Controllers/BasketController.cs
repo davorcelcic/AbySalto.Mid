@@ -33,5 +33,38 @@ namespace AbySalto.Mid.Controllers
             await _basketService.AddProductAsync(numberId, productId, quantity);
             return Ok();
         }
+
+        [HttpPost("remove")]
+        public async Task<IActionResult> RemoveProduct([FromQuery] int productId)
+        {
+            var username = User.Identity?.Name;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "User is not authenticated." });
+            if (productId <= 0)
+                return BadRequest("Invalid product ID.");
+            int numberId;
+            bool success = int.TryParse(userId, out numberId);
+            if (!success)
+                return BadRequest("User ID is not valid.");
+            await _basketService.RemoveProductAsync(numberId, productId);
+            return Ok();
+        }
+
+        [HttpGet("basket-items")]
+        public async Task<IActionResult> GetBasket()
+        {
+            var username = User.Identity?.Name;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "User is not authenticated." });
+            int numberId;
+            bool success = int.TryParse(userId, out numberId);
+            if (!success)
+                return BadRequest("User ID is not valid.");
+            var basket = await _basketService.GetProductsFromBasketAsync(numberId);
+            return Ok(basket);
+        }
     }
 }
+
