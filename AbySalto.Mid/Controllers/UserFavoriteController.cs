@@ -50,5 +50,20 @@ namespace AbySalto.Mid.WebApi.Controllers
                 return NotFound();
             return Ok();
         }
+
+        [HttpGet("favorite-items")]
+        public async Task<IActionResult> GetFavorites()
+        {
+            var username = User.Identity?.Name;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "User is not authenticated." });
+            int numberId;
+            bool success = int.TryParse(userId, out numberId);
+            if (!success)
+                return BadRequest("User ID is not valid.");
+            var favorites = await _favoriteService.GetFavoriteProductsAsync(numberId);
+            return Ok(favorites);
+        }
     }
 }

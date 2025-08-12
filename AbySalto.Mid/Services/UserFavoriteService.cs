@@ -1,6 +1,7 @@
 ﻿using AbySalto.Mid.WebApi.Data;
 using AbySalto.Mid.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AbySalto.Mid.WebApi.Services
 {
@@ -33,6 +34,24 @@ namespace AbySalto.Mid.WebApi.Services
             _context.UserFavorites.Remove(fav);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<Product>> GetFavoriteProductsAsync(int userId)
+        {
+            // Fetch the FavoriteItems for the user
+            var favoriteProductIds = await _context.UserFavorites
+                .Where(f => f.UserId == userId)
+                .Select(f => f.ProductId)
+                .ToListAsync();
+
+            // Fetch the products with those IDs 
+            ProductService productService = new ProductService(new MemoryCache(new MemoryCacheOptions()), new HttpClient());
+            var productResponse = await productService.GetProductsAsync();
+            var products = (productResponse.Products ?? new List<Product>())
+                .Where(p => favoriteProductIds.Contains(p.Id))
+                .ToList();
+
+            return products;
         }
     }
 }
